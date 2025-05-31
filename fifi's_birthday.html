@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>My baby birthday!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #fff0f6;
+    font-family: 'Poppins', sans-serif;
+    color: #45162c;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select:none;
+       -moz-user-select:none;
+        -ms-user-select:none;
+            user-select:none;
+  }
+
+  header {
+    background: #e75480;
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(231, 84, 128, 0.3);
+  }
+
+  header h1 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 2.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+    line-height: 1.2;
+  }
+
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 1.5rem auto 3rem;
+    width: 95vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  /* Checklist Section */
+  section.checklist {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 6px 15px rgba(231, 84, 128, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  section.checklist h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #e75480;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  ul.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  ul.activity-list li {
+    font-size: 1.15rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid #f2cbdc;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+
+  ul.activity-list li:last-child {
+    border-bottom: none;
+  }
+
+  ul.activity-list li:hover {
+    background-color: #ffe6f1;
+  }
+
+  ul.activity-list li input[type="checkbox"] {
+    margin-right: 1rem;
+    width: 22px;
+    height: 22px;
+    accent-color: #e75480;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  ul.activity-list li.completed {
+    color: #a44a6a;
+    text-decoration: line-through;
+  }
+
+  /* Album Section */
+  section.album {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 6px 15px rgba(231, 84, 128, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  section.album h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.25rem;
+    color: #e75480;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 12px solid #e75480;
+    background: #fdebf2;
+    box-shadow: 0 8px 20px rgba(231,84,128,0.25);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+    will-change: transform;
+    cursor: grab;
+  }
+  .carousel-track:active {
+    cursor: grabbing;
+  }
+
+  .carousel-slide {
+    min-width: 100%;
+    user-select: none;
+    position: relative;
+    pointer-events: none; /* disable interactions during drag for smoother experience */
+  }
+
+  /* 4:3 aspect ratio container */
+  .carousel-slide::before {
+    content: "";
+    display: block;
+    padding-top: 75%; /* 3/4 = 75% for 4:3 ratio */
+  }
+
+  .carousel-slide img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    pointer-events: all; /* enabled for images */
+  }
+
+  .caption {
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+    color: #a44a6a;
+    font-size: 1rem;
+  }
+
+  footer {
+    background: #e75480;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    main {
+      grid-template-columns: 1fr;
+      margin: 1rem auto 2rem;
+      width: 85vw;
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    header h1 {
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+      padding: 0 0.5rem;
+    }
+    section.checklist {
+      padding: 1.2rem 1.25rem;
+    }
+    section.checklist h2, section.album h2 {
+      font-size: 1.5rem;
+    }
+    ul.activity-list li {
+      font-size: 1rem;
+      padding: 0.6rem 0;
+    }
+    ul.activity-list li input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.8rem;
+    }
+    section.album {
+      padding: 1.2rem 1.25rem;
+    }
+    .carousel-container {
+      max-width: 100%;
+      border-width: 10px;
+      border-radius: 16px;
+    }
+    .caption {
+      font-size: 0.9rem;
+      margin-top: 0.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Nurshafikah's Birthday!!</h1>
+</header>
+
+<main>
+  <section class="album" aria-label="Photo album">
+    <h2>My love❤️</h2>
+    <div class="carousel-container" aria-label="Birthday picture carousel" >
+      <ul class="carousel-track" id="carousel-track" style="padding:0; margin:0; list-style:none; touch-action: pan-y;">
+        <!-- Slides will be cloned by JS for infinite loop -->
+        <li class="carousel-slide">
+          <img src="pic/aa.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/ss.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/dd.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/ff.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/gg.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/hh.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/jj.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/kk.jpg" alt="My sayang" />
+        </li>
+        <li class="carousel-slide">
+          <img src="pic/ll.jpg" alt="My sayang" />
+        </li>
+      </ul>
+    </div>
+    <p class="caption">Sayanggg! Happy 23rd birthdayy sayang bbb😆❤️. Welcome to my orang tua clubb. Finally umur kita sama dahh. Cepat betul baby besar b ni membesar. Di hari special ayang ni b doakan sayang kejayaan, ketenangan dan rezeki yang melimpah ruah sentiasa, aamiin🤲🏻. B nak sayang tahu betapa bangganya bb dengan sayang atas setiap usaha dan kejayaan yang sayang capai selama ni. Banyak lagi yang kita perlu harungi and b nak kita buat semua tu sama sama tauu🥰. Jangan biarkan ayang tanggung sorang sorang okii🥺. Bb kena ada dengan ayang jugaa hehe. Sayang, tak sabarnya nak kongsi apa b ada dengan sayang. Nak bawa sayang everywhere i go. And nantii kita pergi messnight sama sama okii😆. Ada rezeki nanti kita sambut birthday ayang tauu. Walaupun tak dapat nak sambut pada hari yang sebenar but atleast kita kena sambut ayang jugaa😗. Hadiah yayamg nanti b cari yang cantik cantikkk. Yayang mesti sukaaa hehe. Thank you sayang sebab sanggup tunggu bb habiskan zaman kadet bb. B rasa jadi orang paling beruntung sepanjang hidup bb. Sentiasa ada yang support bb dari jauh. Setiap kali b rasa sakit and down, b selalu fikir ayang untuk moral up kan diri b semula. That's how i be strong sayang🥰. Because of you. You are enough for me sayang. Please dont leave me juga tau. Be my wife tau. And a mother for our kids oneday. We have foreverday to stay together sayang. I wanna grow old with you. Sayang jaga diri baik baik ye dekat mana pun ayang berada. Jangan selalu stress tauu. B risau sayang sakitt. If sayang stress. Ayang luahkan and lepaskan semua dekat bb okii🥺. I love you so much, always and forever sayang❤️</p>
+  </section>
+
+  <section class="checklist" aria-label="Birthday activities checklist">
+    <h2>What we are gonna do on your special day??</h2>
+    <ul class="activity-list" id="activities">
+      <li><label><input type="checkbox" /> Birthday gift reveal</label></li>
+      <li><label><input type="checkbox" /> Birthday dins</label></li>
+      <li><label><input type="checkbox" /> Photobooth</label></li>
+      <li><label><input type="checkbox" /> Jalan-jalan</label></li>
+      <li><label><input type="checkbox" /> Create memories</label></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  Made with ❤️ for Yayang's special day.
+</footer>
+
+<script>
+  // Checklist toggle
+  const activities = document.getElementById('activities');
+  activities.addEventListener('change', (event) => {
+    if (event.target.tagName === 'INPUT' && event.target.type === 'checkbox') {
+      const li = event.target.closest('li');
+      if (event.target.checked) {
+        li.classList.add('completed');
+      } else {
+        li.classList.remove('completed');
+      }
+    }
+  });
+
+  // Carousel with drag and swipe only (no buttons)
+  const track = document.getElementById('carousel-track');
+  const slides = Array.from(track.children);
+
+  // Clone first and last slides for infinite loop effect
+  const firstClone = slides[0].cloneNode(true);
+  const lastClone = slides[slides.length -1].cloneNode(true);
+
+  firstClone.id = 'first-clone';
+  lastClone.id = 'last-clone';
+
+  track.appendChild(firstClone);
+  track.insertBefore(lastClone, slides[0]);
+
+  let slideWidth = slides[0].getBoundingClientRect().width;
+  let currentIndex = 1;
+
+  let isDragging = false;
+  let startPos = 0;
+  let currentTranslate = 0;
+  let prevTranslate = 0;
+  let animationID = 0;
+
+  // Setup initial position
+  setPositionByIndex();
+
+  // Disable context menu on drag
+  window.oncontextmenu = function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  };
+
+  // Touch and mouse events
+  track.addEventListener('touchstart', touchStart);
+  track.addEventListener('touchmove', touchMove);
+  track.addEventListener('touchend', touchEnd);
+
+  track.addEventListener('mousedown', touchStart);
+  track.addEventListener('mousemove', touchMove);
+  track.addEventListener('mouseup', touchEnd);
+  track.addEventListener('mouseleave', touchEnd);
+
+  window.addEventListener('resize', () => {
+    slideWidth = slides[0].getBoundingClientRect().width;
+    setPositionByIndex();
+  });
+
+  function touchStart(event) {
+    isDragging = true;
+    startPos = getPositionX(event);
+    animationID = requestAnimationFrame(animation);
+    track.style.transition = 'none';
+  }
+
+  function touchMove(event) {
+    if (!isDragging) return;
+    const currentPosition = getPositionX(event);
+    currentTranslate = prevTranslate + currentPosition - startPos;
+  }
+
+  function touchEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    cancelAnimationFrame(animationID);
+
+    const movedBy = currentTranslate - prevTranslate;
+
+    // If moved enough to change slide
+    if (movedBy < -100 && currentIndex < slides.length + 1) {
+      currentIndex++;
+    }
+    if (movedBy > 100 && currentIndex > 0) {
+      currentIndex--;
+    }
+    setPositionByIndex();
+  }
+
+  function getPositionX(event) {
+    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+  }
+
+  function animation() {
+    setSliderPosition();
+    if (isDragging) requestAnimationFrame(animation);
+  }
+
+  function setSliderPosition() {
+    track.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  function setPositionByIndex() {
+    currentTranslate = -slideWidth * currentIndex;
+    prevTranslate = currentTranslate;
+    track.style.transition = 'transform 0.4s ease-in-out';
+    track.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  // Infinite loop check after transition
+  track.addEventListener('transitionend', () => {
+    const slidesAll = Array.from(track.children);
+    if (slidesAll[currentIndex].id === 'first-clone') {
+      track.style.transition = 'none';
+      currentIndex = 1;
+      setPositionByIndex();
+    } 
+    if (slidesAll[currentIndex].id === 'last-clone') {
+      track.style.transition = 'none';
+      currentIndex = slides.length - 1;
+      setPositionByIndex();
+    }
+  });
+</script>
+</body>
+</html>
+

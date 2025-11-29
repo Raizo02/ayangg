@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk Sayang 💖</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Custom Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Nunito:wght=400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Custom CSS styles matching the React component */
+        .font-handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .font-body {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-20vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .animate-float {
+            animation: floatUp linear forwards;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ensure smooth transitions for tab content */
+        .tab-content {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="font-body">
+
+    <div id="app-container"
+        class="min-h-screen bg-gradient-to-br from-rose-100 via-pink-200 to-purple-200 flex items-center justify-center p-4 overflow-hidden relative">
+
+        <!-- Background Decor -->
+        <div class="absolute top-10 left-10 text-pink-300 opacity-50 animate-pulse">
+            <!-- Heart Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-heart">
+                <path
+                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+        </div>
+        <div class="absolute bottom-10 right-10 text-purple-300 opacity-50 animate-pulse delay-700">
+            <!-- Heart Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="currentColor"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-heart">
+                <path
+                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+        </div>
+
+        <!-- Content will be rendered here by JavaScript -->
+        <div id="main-content"></div>
+
+        <!-- Floating Hearts Animation Container -->
+        <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    </div>
+
+    <script>
+        // --- State Management ---
+        let isOpen = false;
+        let showConfetti = false;
+        let activeTab = 0;
+        let hearts = [];
+        let heartInterval = null;
+
+        const messageParts = [
+            {
+                title: "Maafkan B...",
+                content: "Assalamualaikum sayang. Sayang masih marahkan b lagi ke? B minta maaf sayang. B tahu mungkin b tak mampu pujuk sayang lagi selepas semua salah b pada sayang. Sayang betul tentang sikap b."
+            },
+            {
+                title: "Kesedaran B",
+                content: "Tapi sekarang b sedar, sayang betul bila sayang kata b pasal b. Masa b cuba menyendiri ni, barulah b betul-betul fikir. Hidup ni tak boleh fikir untuk sekarang je. Kita kena fikir untuk masa depan juga."
+            },
+            {
+                title: "Janji B",
+                content: "B banyak fikir pasal diri sendiri sehinggakan b lupa untuk ambil berat pada sayang. B tahu b bukan lelaki yang baik ataupun sempurna. Tapi b akan berusaha menjadi lebih baik untuk masa depan kita yang lebih cerah."
+            },
+            {
+                title: "Terima Kasih",
+                content: "B terfikir, sayanglah satu-satunya orang yang paling banyak tegur dan bimbing b ke arah lebih baik. Terima kasih kerana percaya yang b boleh berubah, sayang sabar dan tunggu. Terima kasih kerana luangkan masa untuk baca semua ni sayang."
+            }
+        ];
+
+        // --- Icon Helpers (SVG Definitions) ---
+        const HeartIcon = (size, fillClass) => `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fillClass}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            </svg>
+        `;
+
+        const StarsIcon = (size) => `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-stars">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+            </svg>
+        `;
+
+        const SendIcon = (size) => `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send">
+                <path d="m22 2-7 20-4-9-9-4 20-7Z"/>
+                <path d="M15 7L7 15"/>
+            </svg>
+        `;
+
+        // --- Logic Functions ---
+
+        const handleNext = () => {
+            if (activeTab < messageParts.length - 1) {
+                activeTab += 1;
+                render();
+            } else {
+                showConfetti = true;
+                render();
+            }
+        };
+
+        const handleReset = () => {
+            isOpen = false;
+            showConfetti = false;
+            activeTab = 0;
+            hearts = [];
+            render();
+        };
+
+        const handleOpen = () => {
+            isOpen = true;
+            render();
+        }
+
+        const handleBack = () => {
+            if (activeTab > 0) {
+                activeTab -= 1;
+                render();
+            } else {
+                isOpen = false;
+                render();
+            }
+        }
+
+        // --- Heart Animation Functions ---
+
+        function renderHearts() {
+            const heartsContainer = document.getElementById('hearts-container');
+            if (!heartsContainer) return;
+
+            heartsContainer.innerHTML = hearts.map((heart) => `
+                <div 
+                    key="${heart.id}"
+                    class="absolute text-pink-500 animate-float opacity-0"
+                    style="
+                        left: ${heart.left}%;
+                        animation-duration: ${heart.animationDuration}s;
+                        font-size: ${Math.random() * 20 + 20}px;
+                    "
+                >
+                    ${HeartIcon(24, 'currentColor')}
+                </div>
+            `).join('');
+        }
+
+        function updateHeartsAnimation() {
+            if (showConfetti) {
+                if (!heartInterval) {
+                    heartInterval = setInterval(() => {
+                        const newHeart = {
+                            id: Date.now(),
+                            left: Math.random() * 100,
+                            animationDuration: Math.random() * 2 + 3,
+                        };
+                        hearts.push(newHeart);
+                        if (hearts.length > 50) {
+                            hearts = hearts.slice(hearts.length - 50);
+                        }
+                        renderHearts();
+                    }, 300);
+                }
+            } else {
+                if (heartInterval) {
+                    clearInterval(heartInterval);
+                    heartInterval = null;
+                }
+                hearts = [];
+                renderHearts();
+            }
+        }
+
+        // --- Main Render Function ---
+
+        function render() {
+            const mainContent = document.getElementById('main-content');
+            if (!mainContent) return;
+
+            updateHeartsAnimation();
+
+            if (!isOpen) {
+                mainContent.innerHTML = `
+                    <div class="text-center z-10 transition-all duration-700 transform hover:scale-105">
+                        <div 
+                            id="open-button"
+                            class="bg-white/80 backdrop-blur-md p-10 rounded-full shadow-xl cursor-pointer hover:bg-white border-4 border-pink-200 group"
+                        >
+                            <span class="text-pink-500 mx-auto animate-bounce group-hover:text-red-500 transition-colors inline-block">
+                                ${HeartIcon(80, 'currentColor')}
+                            </span>
+                        </div>
+                        <p class="mt-6 text-xl text-purple-800 font-handwriting font-bold tracking-wider animate-pulse">
+                            Ada surat untuk Sayang...
+                            <br/>
+                            <span class="text-sm font-body font-normal text-gray-600">(Klik hati di atas)</span>
+                        </p>
+                    </div>
+                `;
+                document.getElementById('open-button').addEventListener('click', handleOpen);
+            } else {
+                let contentHtml;
+                let footerHtml = '';
+
+                if (showConfetti) {
+                    contentHtml = `
+                        <div class="text-center py-8 animate-pulse">
+                            <span class="mx-auto text-red-500 mb-4 inline-block">
+                                ${HeartIcon(80, '#ef4444')}
+                            </span>
+                            <h2 class="text-3xl font-handwriting text-gray-800 mb-4">
+                                I Love You So Much!
+                            </h2>
+                            <p class="text-gray-600 font-body mb-8">
+                                Always and forever, Sayang.<br/>
+                                Terima kasih sebab sudi maafkan B.
+                            </p>
+                            <button 
+                                id="reset-button"
+                                class="text-sm text-gray-400 hover:text-gray-600 underline"
+                            >
+                                Baca semula
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    const currentMessage = messageParts[activeTab];
+                    const isLastTab = activeTab === messageParts.length - 1;
+
+                    contentHtml = `
+                        <div class="space-y-4 tab-content animate-fade-in">
+                            <h3 class="text-xl font-bold text-pink-600 font-body flex items-center gap-2">
+                                ${StarsIcon(18)}
+                                ${currentMessage.title}
+                            </h3>
+                            <p class="text-gray-700 leading-relaxed font-body text-lg">
+                                ${currentMessage.content}
+                            </p>
+                        </div>
+
+                        <!-- Progress Indicators -->
+                        <div class="flex justify-center gap-2 mt-8 mb-4">
+                            ${messageParts.map((_, idx) => `
+                                <div 
+                                    class="h-2 rounded-full transition-all duration-300 ${idx === activeTab ? 'w-8 bg-pink-500' : 'w-2 bg-pink-200'
+                        }"
+                                ></div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    footerHtml = `
+                        <div class="p-6 bg-gray-50 flex justify-between items-center border-t border-gray-100">
+                            <button 
+                                id="back-button"
+                                class="text-gray-400 hover:text-gray-600 font-body text-sm px-4 py-2"
+                            >
+                                Kembali
+                            </button>
+                            
+                            <button 
+                                id="next-button"
+                                class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full shadow-lg shadow-pink-200 transition-all transform hover:scale-105 flex items-center gap-2 font-body"
+                            >
+                                ${isLastTab ? `
+                                    Maafkan B? 
+                                    <span class="inline-block">${HeartIcon(16, 'white')}</span>
+                                ` : `
+                                    Seterusnya 
+                                    <span class="inline-block">${SendIcon(16)}</span>
+                                `}
+                            </button>
+                        </div>
+                    `;
+                }
+
+                mainContent.innerHTML = `
+                    <div class="max-w-md w-full bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative z-10 animate-fade-in-up transition-all duration-500">
+                        
+                        <!-- Header -->
+                        <div class="bg-pink-500 p-6 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-4 opacity-20">
+                                ${StarsIcon(100)}
+                            </div>
+                            <h1 class="text-3xl font-handwriting font-bold mb-1">
+                                Untuk Kesayangan B
+                            </h1>
+                            <p class="text-pink-100 text-sm font-body">
+                                Baca perlahan-lahan ya...
+                            </p>
+                        </div>
+
+                        <!-- Content Body -->
+                        <div class="p-8 min-h-[300px] flex flex-col justify-between">
+                            ${contentHtml}
+                        </div>
+
+                        <!-- Footer / Controls -->
+                        ${footerHtml}
+                    </div>
+                `;
+
+                // Attach Event Listeners after rendering
+                if (showConfetti) {
+                    document.getElementById('reset-button').addEventListener('click', handleReset);
+                } else {
+                    document.getElementById('next-button').addEventListener('click', handleNext);
+                    document.getElementById('back-button').addEventListener('click', handleBack);
+                }
+            }
+        }
+
+        // Initialize the application on page load
+        window.onload = render;
+
+    </script>
+</body>
+
+</html>

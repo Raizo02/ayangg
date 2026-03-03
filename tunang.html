@@ -6,6 +6,11 @@
     <title>Engagement Planner Afiq x Fifi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Firebase v8 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #FDFBF7; }
@@ -14,7 +19,6 @@
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
-        /* Gaya untuk input di bahagian header */
         .header-input {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -37,90 +41,90 @@
     <header class="bg-[#1E3A8A] text-white pt-10 pb-24 px-6 rounded-b-[40px] shadow-xl relative overflow-hidden text-center">
         <div class="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
         
-        <div class="max-w-2xl mx-auto relative z-10">
+        <div class="max-w-4xl mx-auto relative z-10">
             <div id="sync-status" class="flex justify-center mb-4 min-h-[24px] text-[10px] uppercase font-bold tracking-widest text-blue-100/50">
-                <i data-lucide="database" class="w-3 h-3 mr-2"></i> Simpanan Tempatan Aktif
+                <i data-lucide="refresh-cw" class="w-3 h-3 mr-2 animate-spin"></i> Connecting to Database...
             </div>
 
             <div class="inline-flex items-center justify-center p-3 bg-white/10 backdrop-blur-md rounded-full mb-4 border border-white/20">
                 <i data-lucide="heart" class="text-pink-400 fill-pink-400 w-6 h-6"></i>
             </div>
-            <h1 class="text-3xl font-extrabold tracking-tight mb-2 uppercase italic">Tunang Afiq & Fifi</h1>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 uppercase italic">Tunang Afiq & Fifi</h1>
             
             <!-- Paparan Countdown -->
-            <div id="countdown-container" class="mb-6 flex justify-center gap-2">
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 min-w-[60px] border border-white/10">
-                    <div id="cd-days" class="text-xl font-black font-mono leading-none">00</div>
-                    <div class="text-[8px] uppercase font-bold opacity-60">Hari</div>
+            <div id="countdown-container" class="mb-6 flex justify-center gap-2 md:gap-4">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 md:p-3 min-w-[60px] md:min-w-[80px] border border-white/10">
+                    <div id="cd-days" class="text-xl md:text-2xl font-black font-mono leading-none">00</div>
+                    <div class="text-[8px] md:text-[10px] uppercase font-bold opacity-60">Hari</div>
                 </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 min-w-[60px] border border-white/10">
-                    <div id="cd-hours" class="text-xl font-black font-mono leading-none">00</div>
-                    <div class="text-[8px] uppercase font-bold opacity-60">Jam</div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 md:p-3 min-w-[60px] md:min-w-[80px] border border-white/10">
+                    <div id="cd-hours" class="text-xl md:text-2xl font-black font-mono leading-none">00</div>
+                    <div class="text-[8px] md:text-[10px] uppercase font-bold opacity-60">Jam</div>
                 </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 min-w-[60px] border border-white/10">
-                    <div id="cd-mins" class="text-xl font-black font-mono leading-none">00</div>
-                    <div class="text-[8px] uppercase font-bold opacity-60">Min</div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 md:p-3 min-w-[60px] md:min-w-[80px] border border-white/10">
+                    <div id="cd-mins" class="text-xl md:text-2xl font-black font-mono leading-none">00</div>
+                    <div class="text-[8px] md:text-[10px] uppercase font-bold opacity-60">Min</div>
                 </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 min-w-[60px] border border-white/10">
-                    <div id="cd-secs" class="text-xl font-black font-mono leading-none text-pink-300">00</div>
-                    <div class="text-[8px] uppercase font-bold opacity-60 text-pink-300">Saat</div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-2 md:p-3 min-w-[60px] md:min-w-[80px] border border-white/10">
+                    <div id="cd-secs" class="text-xl md:text-2xl font-black font-mono leading-none text-pink-300">00</div>
+                    <div class="text-[8px] md:text-[10px] uppercase font-bold opacity-60 text-pink-300">Saat</div>
                 </div>
             </div>
 
             <!-- Maklumat Majlis yang Boleh Diedit -->
             <div class="flex flex-wrap justify-center gap-4 mb-6">
                 <div class="flex flex-col items-center">
-                    <span class="text-[8px] uppercase font-bold opacity-50 mb-1">Tarikh</span>
+                    <span class="text-[8px] md:text-[10px] uppercase font-bold opacity-50 mb-1">Tarikh</span>
                     <input type="date" id="event-date" onchange="updateEventInfo('date', this.value)" class="header-input">
                 </div>
                 <div class="flex flex-col items-center">
-                    <span class="text-[8px] uppercase font-bold opacity-50 mb-1">Tetamu</span>
-                    <input type="number" id="event-pax" placeholder="Pax" onchange="updateEventInfo('pax', this.value)" class="header-input w-20">
+                    <span class="text-[8px] md:text-[10px] uppercase font-bold opacity-50 mb-1">Tetamu</span>
+                    <input type="number" id="event-pax" placeholder="Pax" onchange="updateEventInfo('pax', this.value)" class="header-input w-20 md:w-24">
                 </div>
                 <div class="flex flex-col items-center">
-                    <span class="text-[8px] uppercase font-bold opacity-50 mb-1">Tema</span>
-                    <input type="text" id="event-theme" placeholder="Tema" onchange="updateEventInfo('theme', this.value)" class="header-input w-24">
+                    <span class="text-[8px] md:text-[10px] uppercase font-bold opacity-50 mb-1">Tema</span>
+                    <input type="text" id="event-theme" placeholder="Tema" onchange="updateEventInfo('theme', this.value)" class="header-input w-24 md:w-32">
                 </div>
                 <div class="flex flex-col items-center">
-                    <span class="text-[8px] uppercase font-bold opacity-50 mb-1">Pelamin</span>
-                    <input type="text" id="event-dais" placeholder="Pelamin" onchange="updateEventInfo('dais', this.value)" class="header-input w-28">
+                    <span class="text-[8px] md:text-[10px] uppercase font-bold opacity-50 mb-1">Pelamin</span>
+                    <input type="text" id="event-dais" placeholder="Pelamin" onchange="updateEventInfo('dais', this.value)" class="header-input w-28 md:w-40">
                 </div>
             </div>
         </div>
     </header>
 
-    <main id="main-content" class="max-w-2xl mx-auto px-4 -mt-12 relative z-20">
+    <main id="main-content" class="max-w-2xl mx-auto px-4 md:px-6 relative z-20">
         <!-- Kad Statistik Bajet -->
-        <div class="bg-white rounded-3xl shadow-xl p-6 border border-slate-100 flex flex-col md:flex-row gap-6 items-center mb-10">
+        <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-slate-100 flex flex-col md:flex-row gap-6 items-center mb-10 -mt-12">
             <div class="flex-1 text-center md:text-left">
-                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Anggaran Keseluruhan</p>
-                <h3 id="grand-total" class="text-4xl font-black text-slate-800 font-mono text-blue-900 leading-tight">RM 0.00</h3>
+                <p class="text-slate-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1">Anggaran Keseluruhan</p>
+                <h3 id="grand-total" class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-800 font-mono text-blue-900 leading-tight">RM 0.00</h3>
             </div>
             <div class="h-12 w-px bg-slate-100 hidden md:block"></div>
-            <div class="flex gap-4">
+            <div class="flex gap-4 md:gap-8">
                 <div class="text-center">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-1 border border-blue-100">
-                        <i data-lucide="calculator" class="w-4 h-4"></i>
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-1 border border-blue-100">
+                        <i data-lucide="calculator" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </div>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">Barang</p>
-                    <p id="total-items" class="font-bold text-slate-700">0</p>
+                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase">Barang</p>
+                    <p id="total-items" class="font-bold text-slate-700 md:text-lg">0</p>
                 </div>
                 <div class="text-center">
-                    <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 mb-1 border border-green-100">
-                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600 mb-1 border border-green-100">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </div>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">Siap</p>
-                    <p id="completed-items" class="font-bold text-slate-700">0</p>
+                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase">Siap</p>
+                    <p id="completed-items" class="font-bold text-slate-700 md:text-lg">0</p>
                 </div>
             </div>
         </div>
 
         <!-- Bekas untuk senarai kategori -->
-        <div id="categories-container" class="grid grid-cols-1 gap-6"></div>
+        <div id="categories-container" class="flex flex-col gap-6 md:gap-8 items-center"></div>
 
-        <div class="text-center py-10 opacity-50">
-           <p class="text-xs uppercase tracking-[0.2em] font-bold mb-1">Engagement Planner Pro</p>
-           <p class="text-[10px]">Semua data disimpan secara automatik dalam pelayar anda</p>
+        <div class="text-center py-10 opacity-50 max-w-2xl mx-auto">
+           <p class="text-xs uppercase tracking-[0.2em] font-bold mb-1">Engagement Planner Cloud</p>
+           <p class="text-[10px]">Data disegerakkan secara automatik ke Firebase</p>
            <button onclick="resetData()" class="mt-4 text-[10px] text-red-400 hover:text-red-600 underline">Padam & Reset Senarai</button>
         </div>
     </main>
@@ -143,9 +147,28 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'engagement_planner_afiq_fifi_v3';
+        // ===========================
+        // FIREBASE CONFIG
+        // ===========================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIxgeInH8iVR6RCGGcpe-GRZ41N2lgCBE",
+            authDomain: "engagement-planner-afiq.firebaseapp.com",
+            databaseURL: "https://engagement-planner-afiq-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "engagement-planner-afiq",
+            storageBucket: "engagement-planner-afiq.firebasestorage.app",
+            messagingSenderId: "786912887890",
+            appId: "1:786912887890:web:24825682c15a8242948b8b"
+        };
 
-        const INITIAL_STATE = {
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const plannerRef = database.ref("engagementPlanner/afiqFifi");
+
+        // ===========================
+        // STATE (Struktur Awal)
+        // ===========================
+        let state = {
             eventInfo: {
                 date: '2027-01-01',
                 pax: 50,
@@ -209,8 +232,6 @@
             ]
         };
 
-        let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL_STATE;
-
         const categories = [
             { key: 'fifiClothes', title: 'Pakaian Fifi', color: 'bg-pink-500', icon: 'user' },
             { key: 'fifiDulang', title: 'Dulang Fifi', color: 'bg-indigo-500', icon: 'package' },
@@ -219,12 +240,19 @@
             { key: 'others', title: 'Lain-Lain', color: 'bg-slate-700', icon: 'truck' }
         ];
 
+        // ===========================
+        // FUNCTIONS
+        // ===========================
+        function saveData() {
+            plannerRef.set(state);
+        }
+
         function render() {
-            // Kemaskini input maklumat majlis
+            // Update Event Info Inputs
             document.getElementById('event-date').value = state.eventInfo.date;
             document.getElementById('event-pax').value = state.eventInfo.pax;
-            document.getElementById('event-theme').value = state.eventInfo.theme;
-            document.getElementById('event-dais').value = state.eventInfo.dais;
+            document.getElementById('event-theme').value = state.eventInfo.theme || "";
+            document.getElementById('event-dais').value = state.eventInfo.dais || "";
 
             const container = document.getElementById('categories-container');
             container.innerHTML = '';
@@ -234,8 +262,8 @@
             let completedItemsCount = 0;
 
             categories.forEach(cat => {
-                const items = state[cat.key];
-                const subtotal = items.reduce((acc, item) => acc + item.price, 0);
+                const items = state[cat.key] || [];
+                const subtotal = items.reduce((acc, item) => acc + (item.price || 0), 0);
                 const completedCount = items.filter(i => i.completed).length;
                 const progress = Math.round((completedCount / items.length) * 100) || 0;
 
@@ -244,7 +272,7 @@
                 completedItemsCount += completedCount;
 
                 const section = document.createElement('div');
-                section.className = "bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden category-card";
+                section.className = "bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden category-card w-full flex flex-col";
                 section.innerHTML = `
                     <div class="p-4 ${cat.color} text-white flex justify-between items-center">
                         <div class="flex items-center gap-2">
@@ -261,10 +289,10 @@
                             <div class="bg-green-400 h-full transition-all duration-500" style="width: ${progress}%"></div>
                         </div>
                     </div>
-                    <div class="divide-y divide-slate-50" id="list-${cat.key}"></div>
-                    <div class="p-2 bg-slate-50/50 flex justify-center border-t border-slate-100">
-                        <button onclick="addItem('${cat.key}')" class="flex items-center gap-1 text-[8px] font-bold text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
-                            <i data-lucide="plus-circle" class="w-2 h-2"></i> Tambah Item
+                    <div class="divide-y divide-slate-50 flex-grow" id="list-${cat.key}"></div>
+                    <div class="p-3 bg-slate-50/50 flex justify-center border-t border-slate-100 mt-auto">
+                        <button onclick="addItem('${cat.key}')" class="flex items-center gap-1 text-[8px] md:text-[10px] font-bold text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
+                            <i data-lucide="plus-circle" class="w-3 h-3 md:w-4 md:h-4"></i> Tambah Item
                         </button>
                     </div>
                 `;
@@ -274,21 +302,21 @@
                 
                 items.forEach(item => {
                     const row = document.createElement('div');
-                    row.className = `flex items-center p-2 gap-3 transition-colors ${item.completed ? 'bg-green-50/10' : 'hover:bg-slate-50'}`;
+                    row.className = `flex items-center p-3 gap-3 transition-colors ${item.completed ? 'bg-green-50/10' : 'hover:bg-slate-50'}`;
                     row.innerHTML = `
                         <button onclick="toggleItem('${cat.key}', ${item.id})" class="flex-shrink-0 transition-colors ${item.completed ? 'text-green-500' : 'text-slate-300'}">
-                            <i data-lucide="${item.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${item.completed ? 'fill-green-500 text-white' : ''}"></i>
+                            <i data-lucide="${item.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 md:w-6 md:h-6 ${item.completed ? 'fill-green-500 text-white' : ''}"></i>
                         </button>
                         <div class="flex-1 overflow-hidden">
-                            <span class="block truncate text-xs font-medium ${item.completed ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.name}</span>
+                            <span class="block truncate text-xs md:text-sm font-medium ${item.completed ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.name}</span>
                         </div>
                         <div class="flex items-center gap-1 bg-slate-100/50 rounded px-2 py-0.5 border border-slate-100">
-                            <span class="text-slate-400 text-[8px] font-bold">RM</span>
+                            <span class="text-slate-400 text-[8px] md:text-[10px] font-bold">RM</span>
                             <input type="number" value="${item.price || ''}" placeholder="0" onchange="updatePrice('${cat.key}', ${item.id}, this.value)"
-                                class="w-12 bg-transparent border-none focus:ring-0 p-0 text-right font-mono font-bold text-slate-700 text-[10px]">
+                                class="w-12 md:w-16 bg-transparent border-none focus:ring-0 p-0 text-right font-mono font-bold text-slate-700 text-[10px] md:text-xs">
                         </div>
                         <button onclick="deleteItem('${cat.key}', ${item.id})" class="text-slate-200 hover:text-red-400 transition-colors">
-                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                            <i data-lucide="trash-2" class="w-3 h-3 md:w-4 md:h-4"></i>
                         </button>
                     `;
                     listContainer.appendChild(row);
@@ -305,13 +333,12 @@
             updateCountdown();
         }
 
-        // Logik Kiraan Detik
         function updateCountdown() {
             const target = new Date(state.eventInfo.date).getTime();
             const now = new Date().getTime();
             const diff = target - now;
 
-            if (diff < 0) {
+            if (isNaN(target) || diff < 0) {
                 document.getElementById('cd-days').innerText = "00";
                 document.getElementById('cd-hours').innerText = "00";
                 document.getElementById('cd-mins').innerText = "00";
@@ -325,55 +352,62 @@
             document.getElementById('cd-secs').innerText = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
         }
 
-        function saveToLocal() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        }
-
         window.updateEventInfo = (field, val) => {
             state.eventInfo[field] = val;
-            saveToLocal();
-            if (field === 'date') updateCountdown();
+            saveData();
         };
 
         window.toggleItem = (catKey, id) => {
             state[catKey] = state[catKey].map(i => i.id === id ? {...i, completed: !i.completed} : i);
-            saveToLocal();
-            render();
+            saveData();
         };
 
         window.updatePrice = (catKey, id, val) => {
             state[catKey] = state[catKey].map(i => i.id === id ? {...i, price: parseFloat(val) || 0} : i);
-            saveToLocal();
-            render();
+            saveData();
         };
 
         window.addItem = (catKey) => {
             const name = prompt("Nama Item Baru:");
             if (name && name.trim()) {
+                if (!state[catKey]) state[catKey] = [];
                 state[catKey].push({ id: Date.now(), name: name.trim(), price: 0, completed: false });
-                saveToLocal();
-                render();
+                saveData();
             }
         };
 
         window.deleteItem = (catKey, id) => {
             if (confirm("Padam item ini?")) {
                 state[catKey] = state[catKey].filter(i => i.id !== id);
-                saveToLocal();
-                render();
+                saveData();
             }
         };
 
         window.resetData = () => {
-            if(confirm('Semua harga dan status akan dipadam. Teruskan?')) {
+            if(confirm('Semua harga dan status akan dipadam ke nilai asal. Teruskan?')) {
                 state = INITIAL_STATE;
-                saveToLocal();
-                render();
+                saveData();
             }
         };
 
+        // ===========================
+        // REALTIME LISTENER
+        // ===========================
+        plannerRef.on("value", snapshot => {
+            const data = snapshot.val();
+            if (data) {
+                state = data;
+            } else {
+                // First time setup
+                saveData();
+            }
+            render();
+            document.getElementById("sync-status").innerHTML = 
+                '<i data-lucide="cloud" class="w-3 h-3 mr-2 text-green-400"></i> Firebase Sync Aktif';
+            lucide.createIcons();
+        });
+
         setInterval(updateCountdown, 1000);
-        window.onload = render;
     </script>
 </body>
 </html>
